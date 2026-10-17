@@ -23,7 +23,7 @@ FROM base AS serving
 COPY pyproject.toml uv.lock* README.md ./
 RUN uv sync --frozen --group serving --no-dev
 COPY src ./src
-COPY configs ./configs
+COPY ml/configs ./ml/configs
 ENV PATH="/app/.venv/bin:${PATH}" \
     MODEL_PATH=/models/model.ckpt
 EXPOSE 8000

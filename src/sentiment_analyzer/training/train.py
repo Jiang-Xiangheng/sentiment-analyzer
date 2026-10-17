@@ -11,7 +11,7 @@ from ..utils import configure_logging, get_logger, seed_everything
 log = get_logger(__name__)
 
 
-@hydra.main(version_base=None, config_path="../../../configs", config_name="config")
+@hydra.main(version_base=None, config_path="../../../ml/configs", config_name="config")
 def main(cfg: DictConfig) -> None:
     configure_logging(level=cfg.get("log_level", "INFO"))
     seed_everything(cfg.get("seed", 42))

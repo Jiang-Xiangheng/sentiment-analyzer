@@ -11,7 +11,7 @@ stages:
     deps:
       - data/processed
       - src/sentiment_analyzer
-      - configs
+      - ml/configs
     params:
       - params.yaml:
     outs:
