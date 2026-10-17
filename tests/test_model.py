@@ -1,4 +1,5 @@
 """Model smoke tests (forward pass, output shape)."""
+
 from __future__ import annotations
 
 import pytest

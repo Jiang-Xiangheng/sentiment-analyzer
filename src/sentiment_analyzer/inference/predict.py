@@ -1,4 +1,5 @@
 """Inference CLI - load a checkpoint and predict on input(s)."""
+
 from __future__ import annotations
 
 import argparse
@@ -14,8 +15,7 @@ def load_model(checkpoint_path: str | Path):
     """Load a Lightning module from checkpoint, rebuilding the backbone from hparams."""
     import torch
 
-    from ..models import build_model
-    from ..models import NLPModule
+    from ..models import NLPModule, build_model
 
     ckpt = torch.load(str(checkpoint_path), map_location="cpu", weights_only=False)
     hp = ckpt.get("hyper_parameters", {})
@@ -23,8 +23,7 @@ def load_model(checkpoint_path: str | Path):
     num_labels = hp.get("num_labels")
     if model_name is None or num_labels is None:
         raise ValueError(
-            "Checkpoint missing model_name/num_labels hparams - "
-            "re-train after upgrading NLPModule."
+            "Checkpoint missing model_name/num_labels hparams - re-train after upgrading NLPModule."
         )
     backbone = build_model(model_name, num_labels=num_labels)
     return NLPModule.load_from_checkpoint(str(checkpoint_path), model=backbone)
@@ -33,6 +32,8 @@ def load_model(checkpoint_path: str | Path):
 def predict(model, input_path: str | Path):
     """Run a single prediction. Returns a task-specific result dict."""
     raise NotImplementedError("Override predict() per project")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", required=True)
