@@ -27,9 +27,9 @@ pull request can be merged.
 
 | Trigger | Pipeline | What happens |
 |---------|----------|--------------|
-| PR to `dev` / `staging` / `main` | CI | Run tests, lint/format/static analysis, build Docker image |
-| Merge/push to `staging` | CD (staging) | Create `staging.env` from staging secrets, build staging image |
-| Merge/push to `main` | CD (production) | Create `production.env` from production secrets, build production image |
+| PR to `dev` / `staging` / `main` | CI (`lint-test`, `docker-build`) | Run tests, lint/format/static analysis, build Docker image |
+| Merge/push to `staging` | CD (`deploy-staging`) | Create `staging.env` from staging secrets, build staging image |
+| Merge/push to `main` | CD (`deploy-prod`) | Create `production.env` from production secrets, build production image |
 
 > Note: no release or runtime deployment process is required by the course.
 > The CD stages only build the images.
