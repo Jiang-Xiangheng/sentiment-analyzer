@@ -43,10 +43,13 @@ def prepare_data(raw_dir: Path | str, processed_dir: Path | str) -> None:
         split.to_csv(out / f"{name}.csv", index=False)
         log.info("prepare.wrote", name=name, rows=len(split))
 
-    (out / "report.json").write_text(json.dumps({
+    splits = {"train": train, "val": val, "test": test}
+    label_dist = {k: v["label"].value_counts().to_dict() for k, v in splits.items()}
+
+    (out / "metadata.json").write_text(json.dumps({
         "seed": SEED,
-        "splits": {k: len(v) for k, v in (("train", train), ("val", val), ("test", test))},
-        "label_dist": {k: v["label"].value_counts().to_dict() for k, v in (("train", train), ("val", val), ("test", test))},
+        "splits": {k: len(v) for k, v in splits.items()},
+        "label_dist": label_dist,
     }, indent=2))
     log.info("prepare.done")
 

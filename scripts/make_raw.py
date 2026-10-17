@@ -6,6 +6,7 @@ Requires: pip install datasets pandas
 from __future__ import annotations
 
 import os
+
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 
 from pathlib import Path
@@ -20,7 +21,11 @@ RAW_PATH = Path("data/raw/imdb_raw.csv")
 
 def main() -> None:
     ds = load_dataset("stanfordnlp/imdb")
-    rows = [{"text": ex["text"], "label": int(ex["label"])} for split in ("train", "test") for ex in ds[split]]
+    rows = [
+        {"text": ex["text"], "label": int(ex["label"])}
+        for split in ("train", "test")
+        for ex in ds[split]
+    ]
     df = pd.DataFrame(rows).sample(n=N_RAW, random_state=SEED).reset_index(drop=True)
     RAW_PATH.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(RAW_PATH, index=False)
