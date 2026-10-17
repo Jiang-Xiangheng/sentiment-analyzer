@@ -1,5 +1,5 @@
-
 """Data preparation stage: raw -> cleaned, label-encoded, split CSVs."""
+
 from __future__ import annotations
 
 import json
@@ -46,19 +46,24 @@ def prepare_data(raw_dir: Path | str, processed_dir: Path | str) -> None:
     splits = {"train": train, "val": val, "test": test}
     label_dist = {k: v["label"].value_counts().to_dict() for k, v in splits.items()}
 
-    (out / "metadata.json").write_text(json.dumps({
-        "seed": SEED,
-        "splits": {k: len(v) for k, v in splits.items()},
-        "label_dist": label_dist,
-    }, indent=2))
+    (out / "metadata.json").write_text(
+        json.dumps(
+            {
+                "seed": SEED,
+                "splits": {k: len(v) for k, v in splits.items()},
+                "label_dist": label_dist,
+            },
+            indent=2,
+        )
+    )
     log.info("prepare.done")
 
 
-if __name__ ==  "__main__":
+if __name__ == "__main__":
     import argparse
+
     p = argparse.ArgumentParser()
     p.add_argument("--raw", required=True)
     p.add_argument("--out", required=True)
     a = p.parse_args()
     prepare_data(a.raw, a.out)
-
