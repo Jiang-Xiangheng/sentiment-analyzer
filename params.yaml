@@ -1,0 +1,6 @@
+model:
+name: xlm-roberta-base
+lr: 2e-5
+trainer:
+  max_epochs: 30
+seed: 42

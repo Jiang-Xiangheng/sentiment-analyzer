@@ -1,0 +1,21 @@
+stages:
+  prepare:
+    cmd: python -m sentiment_analyzer.data.prepare --raw data/raw --out data/processed
+    deps:
+      - data/raw
+      - src/sentiment_analyzer/data/prepare.py
+    outs:
+      - data/processed
+  train:
+    cmd: python -m sentiment_analyzer.training.train
+    deps:
+      - data/processed
+      - src/sentiment_analyzer
+      - configs
+    params:
+      - params.yaml:
+    outs:
+      - artifacts/checkpoints
+    metrics:
+      - reports/metrics.json:
+          cache: false
