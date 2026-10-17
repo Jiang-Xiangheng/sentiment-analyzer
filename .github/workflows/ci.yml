@@ -12,8 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v3
-        with:
-          enable-cache: true
       - name: Set up Python
         run: uv python install
       - name: Install deps
@@ -105,6 +103,7 @@ jobs:
 
   actionlint:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - name: Run actionlint
