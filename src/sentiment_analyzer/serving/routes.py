@@ -1,13 +1,13 @@
 """FastAPI routes."""
+
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, Depends
 
 from .. import __version__
 from ..inference.predict import predict
 from .dependencies import get_model
-from .errors import InferenceError
-from .schemas import HealthResponse
+from .schemas import ClassificationResponse, HealthResponse, TextRequest
 
 router = APIRouter()
 
@@ -20,11 +20,10 @@ def health() -> HealthResponse:
     except Exception:
         loaded = False
     return HealthResponse(
-        status="ok" if loaded else "degraded", model_loaded=loaded, version=__version__,
+        status="ok" if loaded else "degraded",
+        model_loaded=loaded,
+        version=__version__,
     )
-
-
-from .schemas import ClassificationResponse, TextRequest
 
 
 @router.post("/classify", response_model=ClassificationResponse)

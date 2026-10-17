@@ -9,11 +9,11 @@ Usage:
         --out artifacts/hf_export \\
         --base-model <HF_BASE_MODEL_ID>
 """
+
 from __future__ import annotations
 
 import argparse
 from pathlib import Path
-
 
 
 def main() -> None:
@@ -23,8 +23,7 @@ def main() -> None:
     p.add_argument(
         "--base-model",
         default=None,
-        help="HF base model ID to copy tokenizer from "
-             "(e.g. bert-base-uncased)",
+        help="HF base model ID to copy tokenizer from (e.g. bert-base-uncased)",
     )
     args = p.parse_args()
 
@@ -52,8 +51,6 @@ def main() -> None:
         print(f"Copied tokenizer from {args.base_model} to {out}")
 
     print(f"HF-native export complete: {out}")
-
-
 
 
 if __name__ == "__main__":

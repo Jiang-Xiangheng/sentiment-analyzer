@@ -1,11 +1,12 @@
 """Dataset implementations."""
+
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
-from PIL import Image
 from torch.utils.data import Dataset
+
 
 class TextDataset(Dataset):
     """CSV-backed text classification dataset."""
