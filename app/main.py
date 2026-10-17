@@ -7,6 +7,7 @@ Start the API server with:
 The actual FastAPI application lives in ``sentiment_analyzer.serving.main``;
 this module is the top-level entrypoint expected by the course layout.
 """
+
 from __future__ import annotations
 
 from sentiment_analyzer.serving.main import app
