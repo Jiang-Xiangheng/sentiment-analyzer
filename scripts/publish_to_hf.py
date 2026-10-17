@@ -211,10 +211,7 @@ def main() -> None:
             metrics=metrics,
             out_path=tmp_path / "README.md",
             model_description="A production-grade ML project.",
-            github_url=(
-                "https://github.com/"
-                "Jiang-Xiangheng/sentiment-analyzer"
-            ),
+            github_url=("https://github.com/Jiang-Xiangheng/sentiment-analyzer"),
             repo_id=args.repo_id,
             base_model=args.base_model,
             library_name=args.library_name,

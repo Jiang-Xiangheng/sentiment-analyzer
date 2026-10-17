@@ -1,4 +1,5 @@
 """CLI entrypoint: python -m sentiment_analyzer"""
+
 from __future__ import annotations
 
 import sys

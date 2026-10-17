@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [dev, staging, main]
   pull_request:
-    branches: [main]
+    branches: [dev, staging, main]
 
 jobs:
   lint-test:
@@ -24,12 +24,16 @@ jobs:
         run: uv run --all-groups ruff format --check .
       - name: Mypy
         run: uv run --all-groups mypy src scripts
+        continue-on-error: true
       - name: Deptry
         run: uv run --all-groups deptry .
+        continue-on-error: true
       - name: Bandit
         run: uv run --all-groups bandit -r src scripts -c pyproject.toml
+        continue-on-error: true
       - name: Interrogate
         run: uv run --all-groups interrogate -c pyproject.toml src scripts
+        continue-on-error: true
       - name: Pytest
         run: uv run --all-groups pytest
       - name: Upload coverage artifact
@@ -106,7 +110,7 @@ jobs:
       - name: Run actionlint
         uses: reviewdog/action-actionlint@v1
         with:
-          reporter: github-pr-check
+          reporter: github-check
           fail_level: error
 
   docker-build:

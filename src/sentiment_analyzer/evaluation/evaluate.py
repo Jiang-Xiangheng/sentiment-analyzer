@@ -1,4 +1,5 @@
 """Evaluation CLI - runs model on test set, writes reports/metrics.json."""
+
 from __future__ import annotations
 
 import argparse

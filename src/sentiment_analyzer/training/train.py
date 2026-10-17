@@ -1,4 +1,5 @@
 """Training entrypoint (Hydra-powered)."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -20,13 +21,11 @@ def main(cfg: DictConfig) -> None:
     import lightning as L
     from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
     from lightning.pytorch.loggers import MLFlowLogger
-
-    from ..models import build_model
-    from transformers import AutoTokenizer
     from torch.utils.data import DataLoader
+    from transformers import AutoTokenizer
 
     from ..data import TextDataset
-    from ..models import NLPModule
+    from ..models import NLPModule, build_model
 
     tok = AutoTokenizer.from_pretrained(cfg.model.name)
     train_ds = TextDataset(cfg.data.train_csv, tokenizer=tok, max_length=cfg.data.max_length)
