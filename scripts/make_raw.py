@@ -17,7 +17,6 @@ from __future__ import annotations
 import json
 import os
 import random
-import re
 
 os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
 
@@ -34,12 +33,88 @@ MANIFEST_PATH = Path("data/raw/raw_manifest.json")
 
 # Common English stopwords (lowercased) — never replaced during synonym aug.
 STOPWORDS = set(
-    """
-    a an the and or but if while of to in on at by for with without from into as is are
-    was were be been being this that these those it its he she they we you i him her them
-    his their our your my me us not no do does did have has had will would can could should
-    may might must about up down out off over under again more most very just only also too
-    """.split()
+    [
+        "a",
+        "an",
+        "the",
+        "and",
+        "or",
+        "but",
+        "if",
+        "while",
+        "of",
+        "to",
+        "in",
+        "on",
+        "at",
+        "by",
+        "for",
+        "with",
+        "without",
+        "from",
+        "into",
+        "as",
+        "is",
+        "are",
+        "was",
+        "were",
+        "be",
+        "been",
+        "being",
+        "this",
+        "that",
+        "these",
+        "those",
+        "it",
+        "its",
+        "he",
+        "she",
+        "they",
+        "we",
+        "you",
+        "i",
+        "him",
+        "her",
+        "them",
+        "his",
+        "their",
+        "our",
+        "your",
+        "my",
+        "me",
+        "us",
+        "not",
+        "no",
+        "do",
+        "does",
+        "did",
+        "have",
+        "has",
+        "had",
+        "will",
+        "would",
+        "can",
+        "could",
+        "should",
+        "may",
+        "might",
+        "must",
+        "about",
+        "up",
+        "down",
+        "out",
+        "off",
+        "over",
+        "under",
+        "again",
+        "more",
+        "most",
+        "very",
+        "just",
+        "only",
+        "also",
+        "too",
+    ]
 )
 
 
@@ -156,9 +231,7 @@ def main() -> None:
     }
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2))
 
-    print(
-        f"Wrote {len(df)} raw rows (base={len(base)}, aug={len(aug_rows)}) -> {RAW_PATH}"
-    )
+    print(f"Wrote {len(df)} raw rows (base={len(base)}, aug={len(aug_rows)}) -> {RAW_PATH}")
     print(f"Manifest -> {MANIFEST_PATH}")
 
 
