@@ -13,7 +13,9 @@ from ..utils import get_logger
 log = get_logger(__name__)
 
 SEED = 42
+DATASET_VERSION = "v2"
 RAW_FILENAME = "imdb_raw.csv"
+MANIFEST_FILENAME = "raw_manifest.json"
 N_TRAIN, N_VAL, N_TEST = 5000, 1000, 1000
 
 
@@ -29,6 +31,14 @@ def prepare_data(raw_dir: Path | str, processed_dir: Path | str) -> None:
     raw_path = raw / RAW_FILENAME
     if not raw_path.exists():
         raise FileNotFoundError(f"No raw at {raw_path}; run `python scripts/make_raw.py` first.")
+
+    manifest_path = raw / MANIFEST_FILENAME
+    manifest: dict = {}
+    if manifest_path.exists():
+        try:
+            manifest = json.loads(manifest_path.read_text())
+        except Exception:
+            manifest = {}
 
     log.info("prepare.start", raw=str(raw_path))
     df = pd.read_csv(raw_path)[["text", "label"]].copy()
@@ -49,9 +59,14 @@ def prepare_data(raw_dir: Path | str, processed_dir: Path | str) -> None:
     (out / "metadata.json").write_text(
         json.dumps(
             {
+                "dataset_version": DATASET_VERSION,
                 "seed": SEED,
                 "splits": {k: len(v) for k, v in splits.items()},
                 "label_dist": label_dist,
+                "raw_seed": manifest.get("seed"),
+                "n_base": manifest.get("n_base"),
+                "n_augmented": manifest.get("n_augmented"),
+                "augmentation": manifest.get("techniques"),
             },
             indent=2,
         )
