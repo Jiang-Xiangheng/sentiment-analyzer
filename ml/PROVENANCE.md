@@ -7,8 +7,8 @@ traced back to the exact code and dataset that produced it.
 
 | Model / run | Training commit | Dataset version | DVC pointer | MLflow run | Artifact |
 |-------------|-----------------|-----------------|-------------|------------|----------|
-| Baseline | `<commit-sha>` | `v1` (`data-v1`) | `data/raw.dvc` | `<run-id>` | `artifacts/checkpoints/best.ckpt` |
-| Production | `<commit-sha>` | `v2` (`data-v2`) | `data/raw.dvc` | `<run-id>` | `artifacts/checkpoints/best.ckpt` |
+| Baseline | `<commit-sha>` | `v1` (`data-v1`) | `data/raw/imdb_raw.csv.dvc` | `<run-id>` | `artifacts/checkpoints/best.ckpt` |
+| Production | `<commit-sha>` | `v2` (`data-v2`) | `data/raw/imdb_raw.csv.dvc` | `<run-id>` | `artifacts/checkpoints/best.ckpt` |
 
 ## How to answer "which dataset produced this model?"
 
