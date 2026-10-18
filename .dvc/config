@@ -1,0 +1,5 @@
+[core]
+    remote = myazure
+['remote "myazure"']
+    url = azure://dvc/sentiment-analyzer-team5
+    account_name = wut2026
