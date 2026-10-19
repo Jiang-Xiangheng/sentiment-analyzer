@@ -1,0 +1,11 @@
+{
+  "dataset_version": "v2",
+  "seed": 1337,
+  "n_base": 10000,
+  "n_augmented": 4000,
+  "techniques": [
+    "character_dropout",
+    "wordnet_synonym_replacement",
+    "ending_punctuation_variation"
+  ]
+}

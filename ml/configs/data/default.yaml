@@ -3,3 +3,5 @@ val_csv: data/processed/val.csv
 test_csv: data/processed/test.csv
 batch_size: 16
 max_length: 512
+# Optional toy-scale subsample of the training split (null = use everything).
+max_train_samples: null

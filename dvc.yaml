@@ -2,7 +2,7 @@ stages:
   prepare:
     cmd: python -m sentiment_analyzer.data.prepare --raw data/raw --out data/processed
     deps:
-      - data/raw
+      - data/raw/imdb_raw.csv
       - src/sentiment_analyzer/data/prepare.py
     outs:
       - data/processed
@@ -12,8 +12,6 @@ stages:
       - data/processed
       - src/sentiment_analyzer
       - ml/configs
-    params:
-      - params.yaml:
     outs:
       - artifacts/checkpoints
     metrics:

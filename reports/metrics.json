@@ -1,0 +1,6 @@
+{
+  "n_test": 1000,
+  "accuracy": 0.842,
+  "f1_macro": 0.8418760308081537,
+  "checkpoint": "artifacts/checkpoints/best.ckpt"
+}
