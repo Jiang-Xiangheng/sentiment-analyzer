@@ -20,7 +20,7 @@ import webbrowser
 from pathlib import Path
 
 DEFAULT_HOST = "127.0.0.1"
-DEFAULT_PORT = 8000
+DEFAULT_PORT = 8010
 STARTUP_TIMEOUT = 240.0
 
 # Make status messages visible immediately, even when stdout is redirected.
@@ -74,6 +74,68 @@ def pause(message: str = "\nPress Enter to close...") -> None:
         input(message)
 
 
+def _browser_candidates() -> list[tuple[Path, str]]:
+    """Return likely browser executables and the flag to open a new window."""
+    roots = [
+        os.environ.get("PROGRAMFILES(X86)", r"C:\Program Files (x86)"),
+        os.environ.get("PROGRAMFILES", r"C:\Program Files"),
+        os.environ.get("LOCALAPPDATA", ""),
+    ]
+    relative = [
+        ("Microsoft/Edge/Application/Microsoft Edge.exe", "--new-window"),
+        ("Google/Chrome/Application/chrome.exe", "--new-window"),
+        ("Mozilla Firefox/firefox.exe", "-new-window"),
+    ]
+    candidates: list[tuple[Path, str]] = []
+    for root in roots:
+        if not root:
+            continue
+        for rel, flag in relative:
+            candidates.append((Path(root) / rel, flag))
+
+    # Edge is sometimes only available through a versioned launcher directory.
+    for root in roots:
+        if not root:
+            continue
+        edge_dir = Path(root) / "Microsoft/Edge/Application"
+        if edge_dir.is_dir():
+            for versioned in sorted(edge_dir.glob("*/msedge.exe"), reverse=True):
+                candidates.append((versioned, "--new-window"))
+    return candidates
+
+
+def open_browser(url: str) -> None:
+    """Open the URL with the system default browser and bring it to the front."""
+    if sys.platform == "win32":
+        for executable, flag in _browser_candidates():
+            if not executable.is_file():
+                continue
+            try:
+                subprocess.Popen(
+                    [str(executable), flag, url],
+                    close_fds=True,
+                )
+                return
+            except OSError:
+                continue
+        try:
+            subprocess.Popen(
+                ["cmd", "/c", "start", "", url],
+                close_fds=True,
+            )
+            return
+        except OSError:
+            pass
+    try:
+        if hasattr(os, "startfile"):
+            os.startfile(url)  # type: ignore[attr-defined]
+            return
+    except OSError:
+        pass
+    with contextlib.suppress(Exception):
+        webbrowser.open(url, new=1, autoraise=True)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Start the sentiment analysis web app.")
     parser.add_argument("--host", default=DEFAULT_HOST)
@@ -93,7 +155,8 @@ def main() -> int:
         print("  server  : already running")
         print(f"  open    : {url}")
         if not args.no_browser:
-            webbrowser.open(url)
+            open_browser(url)
+        print(f"  If the browser did not open, visit: {url}")
         return 0
 
     python = find_python(root)
@@ -148,7 +211,8 @@ def main() -> int:
 
         print(f"\n  ready: {url}")
         if not args.no_browser:
-            webbrowser.open(url)
+            open_browser(url)
+        print(f"  If the browser did not open, visit: {url}")
         print("  Press Ctrl+C to stop the server.\n")
         process.wait()
     except KeyboardInterrupt:
