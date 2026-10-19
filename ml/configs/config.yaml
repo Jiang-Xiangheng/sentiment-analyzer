@@ -3,6 +3,9 @@ defaults:
   - model: default
   - trainer: default
   - _self_
+  # Experiment overrides are applied AFTER _self_ so they win over the
+  # values defined below (e.g. experiment_name).
+  - experiment: baseline
 
 experiment_name: "sentiment-analyzer"
 seed: 42

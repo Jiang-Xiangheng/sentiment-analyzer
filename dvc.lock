@@ -1,0 +1,20 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m sentiment_analyzer.data.prepare --raw data/raw --out 
+      data/processed
+    deps:
+    - path: data/raw/imdb_raw.csv
+      hash: md5
+      md5: 8fc4498fad8451c4091cca0a4ff595de
+      size: 18503566
+    - path: src/sentiment_analyzer/data/prepare.py
+      hash: md5
+      md5: 821c3c3a691f66bcd3997cda1abaab98
+      size: 2820
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 34ee92d7ba7f96d4af21b0af11310f44.dir
+      size: 18173286
+      nfiles: 4

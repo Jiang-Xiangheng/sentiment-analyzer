@@ -52,6 +52,17 @@ src/sentiment_analyzer/
 └── utils/
 ```
 
+## Acknowledgements
+
+This project was bootstrapped from the **ml-project-template** by Daniil Kiselyov
+([kiselyovd](https://github.com/kiselyovd)), which is distributed under the MIT License.
+
+- Original repository: <https://github.com/kiselyovd/ml-project-template>
+- Original author: Daniil Kiselyov (kiselyovd)
+- Original license: MIT
+
+The original MIT copyright notice is retained in [LICENSE](LICENSE).
+
 ## License
 
 MIT - see [LICENSE](LICENSE).

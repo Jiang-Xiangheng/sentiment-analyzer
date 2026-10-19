@@ -4,27 +4,29 @@
 
 | Field | Value |
 |-------|-------|
-| Model | `<e.g. xlm-roberta-base fine-tuned for sentiment>` |
+| Model | `bert-base-uncased` fine-tuned for binary sentiment |
 | MLflow experiment | `sota` |
-| MLflow run ID | `<run-id>` |
-| Dataset version | `v2` (`data-v2`) |
-| Training commit | `<git-sha>` |
-| Artifact | `artifacts/checkpoints/best.ckpt` |
+| MLflow run ID | `675f0d90823040ce9d667b03a2c9f69e` |
+| Dataset version | `v2` (DVC raw md5 `8fc4498fad8451c4091cca0a4ff595de`) |
+| Training commit | `be08c21f60086efb693ca956713bae72b7c99ee8` (plus the MLflow wiring change) |
+| Artifact | MLflow artifact `best.ckpt` of run `675f0d90823040ce9d667b03a2c9f69e` (`artifacts/checkpoints/best.ckpt` when reproduced locally) |
 | Serving endpoint | `POST /classify` |
-| Promoted at | `<YYYY-MM-DD>` |
+| Promoted at | 2026-10-18 |
 
 ## Validation metrics
 
 | Metric | Value |
 |--------|-------|
-| Accuracy | `<...>` |
-| Macro F1 | `<...>` |
-| Loss | `<...>` |
+| Test accuracy | 0.842 |
+| Test macro F1 | 0.842 |
+| Test loss | 0.349 |
 
 ## Why this model is in production
 
-`<Short explanation: best validation metric, acceptable latency, stable
-behaviour on edge cases.>`
+Best test macro-F1 of the two tracked experiments (0.842 vs 0.784 for the
+`distilbert-base-uncased` baseline), with CPU inference latency well under one
+second per request and a checkpoint size that fits comfortably in the serving
+image.
 
 ## How to load
 
