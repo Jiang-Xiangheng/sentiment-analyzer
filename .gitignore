@@ -27,3 +27,9 @@ data/processed/*
 .env
 .env.local
 venv/
+
+# Launcher / PyInstaller build artifacts
+build/
+dist/
+*.spec
+*.exe
