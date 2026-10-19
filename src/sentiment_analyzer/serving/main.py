@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import uuid
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from ..utils import configure_logging, get_logger
@@ -51,3 +53,11 @@ async def add_request_id(request: Request, call_next):
 
 
 app.include_router(router)
+
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+
+
+@app.get("/", include_in_schema=False)
+def index() -> FileResponse:
+    """Serve the single-page sentiment UI."""
+    return FileResponse(STATIC_DIR / "index.html")
