@@ -1,7 +1,15 @@
+# NOTE: The Hydra configs under ml/configs/ are the single source of truth for
+# training. This file is kept for DVC convention only and mirrors the defaults
+# of the `baseline` experiment. If you change an experiment, edit the matching
+# file in ml/configs/experiment/ instead of this one.
 model:
-  name: xlm-roberta-base
+  name: distilbert-base-uncased
   lr: 2.0e-5
   num_labels: 2
+data:
+  max_length: 64
+  batch_size: 32
+  max_train_samples: 3000
 trainer:
-  max_epochs: 30
+  max_epochs: 1
 seed: 42

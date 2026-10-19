@@ -1,4 +1,11 @@
 # @package _global_
 experiment_name: sota
+model:
+  name: bert-base-uncased
+data:
+  # Larger backbone + slightly longer context, same toy-scale budget.
+  max_length: 96
+  batch_size: 16
+  max_train_samples: 3000
 trainer:
-  max_epochs: 100
+  max_epochs: 1

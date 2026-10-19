@@ -1,4 +1,12 @@
 # @package _global_
 experiment_name: baseline
 model:
-  name: bert-base-multilingual-cased
+  name: distilbert-base-uncased
+data:
+  # Toy-scale settings: shorter context, larger batch and a 3k subsample keep
+  # a full CPU run in the ~5 minute range.
+  max_length: 64
+  batch_size: 32
+  max_train_samples: 3000
+trainer:
+  max_epochs: 1
