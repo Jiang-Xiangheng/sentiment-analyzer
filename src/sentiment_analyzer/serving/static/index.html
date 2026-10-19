@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sentiment Analyzer</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      --bg-1: #0f172a;
+      --bg-2: #1e293b;
+      --card: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --pos: #34d399;
+      --neg: #f87171;
+      --accent: #818cf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, #312e81 0%, transparent 60%),
+        radial-gradient(800px 500px at 110% 10%, #0f766e 0%, transparent 55%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-2));
+    }
+    .card {
+      width: min(680px, 100%);
+      padding: 28px;
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+    }
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+    }
+    .sub { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 14px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #64748b;
+    }
+    .dot.ok { background: var(--pos); box-shadow: 0 0 10px var(--pos); }
+    .dot.bad { background: var(--neg); box-shadow: 0 0 10px var(--neg); }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      margin-top: 20px;
+      padding: 14px 16px;
+      resize: vertical;
+      font: inherit;
+      color: var(--text);
+      background: rgba(2, 6, 23, 0.55);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.18);
+    }
+    .meta {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .chip {
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover { color: var(--text); border-color: var(--accent); }
+
+    .actions { display: flex; gap: 10px; margin-top: 18px; }
+    button {
+      font: inherit;
+      font-weight: 600;
+      padding: 11px 20px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.1s, opacity 0.15s, background 0.15s;
+    }
+    button:active { transform: translateY(1px); }
+    .primary {
+      flex: 1;
+      color: #0b1020;
+      background: linear-gradient(135deg, #a5b4fc, #67e8f9);
+    }
+    .primary:disabled { opacity: 0.6; cursor: progress; }
+    .ghost {
+      color: var(--text);
+      background: transparent;
+      border-color: var(--border);
+    }
+    .ghost:hover { background: rgba(255, 255, 255, 0.06); }
+
+    .result {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      animation: rise 0.25s ease;
+    }
+    .hidden { display: none; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .verdict {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .badge {
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: capitalize;
+    }
+    .badge.positive { color: #052e1b; background: var(--pos); }
+    .badge.negative { color: #3b0a0a; background: var(--neg); }
+    .confidence { font-size: 1.5rem; font-weight: 700; }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 92px 1fr 58px;
+      align-items: center;
+      gap: 10px;
+      margin: 9px 0;
+      font-size: 0.85rem;
+    }
+    .bar-label { color: var(--muted); text-transform: capitalize; }
+    .bar-track {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.45s ease;
+    }
+    .bar-fill.positive { background: linear-gradient(90deg, #059669, var(--pos)); }
+    .bar-fill.negative { background: linear-gradient(90deg, #b91c1c, var(--neg)); }
+    .bar-score { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    .error {
+      margin: 16px 0 0;
+      padding: 12px 14px;
+      font-size: 0.85rem;
+      color: #fecaca;
+      background: rgba(248, 113, 113, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      border-radius: 12px;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <header>
+      <h1>Sentiment Analyzer</h1>
+      <p class="sub">Type a sentence and the model predicts whether it is positive or negative.</p>
+      <div class="status"><span id="dot" class="dot"></span><span id="status">checking model…</span></div>
+    </header>
+
+    <textarea id="text" maxlength="5000" placeholder="e.g. I absolutely love this movie"></textarea>
+    <div class="meta"><span id="count">0 / 5000</span></div>
+
+    <div class="examples" id="examples"></div>
+
+    <div class="actions">
+      <button id="analyze" class="primary">Analyze</button>
+      <button id="clear" class="ghost">Clear</button>
+    </div>
+
+    <section id="result" class="result hidden">
+      <div class="verdict">
+        <span id="label" class="badge"></span>
+        <span id="confidence" class="confidence"></span>
+      </div>
+      <div id="bars"></div>
+    </section>
+
+    <p id="error" class="error hidden"></p>
+
+    <footer>
+      <a href="/docs" target="_blank" rel="noreferrer">API docs</a>
+      <span id="model"></span>
+    </footer>
+  </main>
+
+  <script>
+    const MAX = 5000;
+    const EXAMPLES = [
+      "I absolutely love this movie",
+      "This is the worst film I have ever seen",
+      "I don't like it",
+      "What a wonderful story",
+      "Boring and predictable",
+      "😀"
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const textEl = $("text");
+    const analyzeBtn = $("analyze");
+    const resultEl = $("result");
+    const errorEl = $("error");
+
+    function updateCount() {
+      $("count").textContent = `${textEl.value.length} / ${MAX}`;
+    }
+
+    function showError(message) {
+      errorEl.textContent = message;
+      errorEl.classList.remove("hidden");
+    }
+
+    function clearError() {
+      errorEl.classList.add("hidden");
+      errorEl.textContent = "";
+    }
+
+    function render(data) {
+      const top = data.top_k[0];
+      const label = top.label;
+      $("label").textContent = label;
+      $("label").className = `badge ${label}`;
+      $("confidence").textContent = `${(top.score * 100).toFixed(1)}%`;
+
+      $("bars").innerHTML = data.top_k
+        .map((item) => {
+          const pct = (item.score * 100).toFixed(1);
+          return `
+            <div class="bar-row">
+              <span class="bar-label">${item.label}</span>
+              <div class="bar-track"><div class="bar-fill ${item.label}" style="width:${pct}%"></div></div>
+              <span class="bar-score">${pct}%</span>
+            </div>`;
+        })
+        .join("");
+
+      resultEl.classList.remove("hidden");
+    }
+
+    async function analyze() {
+      const text = textEl.value.trim();
+      clearError();
+      if (!text) {
+        showError("Please type something first.");
+        return;
+      }
+
+      analyzeBtn.disabled = true;
+      analyzeBtn.textContent = "Analyzing…";
+      try {
+        const res = await fetch("/classify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+
+        if (res.status === 422) {
+          showError("Input rejected: text must contain 1–5000 characters.");
+          return;
+        }
+        if (!res.ok) {
+          let detail = `Request failed (HTTP ${res.status}).`;
+          try {
+            const body = await res.json();
+            if (body.detail) detail = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail);
+          } catch (_) {}
+          showError(detail);
+          return;
+        }
+
+        render(await res.json());
+      } catch (err) {
+        showError("Could not reach the API. Is the server running?");
+      } finally {
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = "Analyze";
+      }
+    }
+
+    async function loadStatus() {
+      try {
+        const res = await fetch("/health");
+        const body = await res.json();
+        const ok = body.model_loaded;
+        $("dot").className = `dot ${ok ? "ok" : "bad"}`;
+        $("status").textContent = ok ? "model ready" : "model not loaded";
+        $("model").textContent = body.model_loaded && body.version ? `v${body.version}` : "";
+      } catch (_) {
+        $("dot").className = "dot bad";
+        $("status").textContent = "API unreachable";
+      }
+    }
+
+    EXAMPLES.forEach((example) => {
+      const chip = document.createElement("button");
+      chip.className = "chip";
+      chip.type = "button";
+      chip.textContent = example;
+      chip.addEventListener("click", () => {
+        textEl.value = example;
+        updateCount();
+        textEl.focus();
+      });
+      $("examples").appendChild(chip);
+    });
+
+    textEl.addEventListener("input", updateCount);
+    textEl.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") analyze();
+    });
+    analyzeBtn.addEventListener("click", analyze);
+    $("clear").addEventListener("click", () => {
+      textEl.value = "";
+      updateCount();
+      resultEl.classList.add("hidden");
+      clearError();
+      textEl.focus();
+    });
+
+    updateCount();
+    loadStatus();
+  </script>
+</body>
+</html>
