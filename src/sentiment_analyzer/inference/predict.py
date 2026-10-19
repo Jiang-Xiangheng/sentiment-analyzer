@@ -135,7 +135,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--checkpoint", required=True)
     parser.add_argument("--text", help="Text to classify.")
-    parser.add_argument("--input", help="Path to a UTF-8 text file to classify.")
+    parser.add_argument("--input", help="Path to a UTF-8 text file, or the text itself.")
     args = parser.parse_args()
 
     if args.text is None and args.input is None:
@@ -143,7 +143,14 @@ def main() -> None:
 
     configure_logging()
     model = load_model(args.checkpoint)
-    text = args.text if args.text is not None else Path(args.input).read_text(encoding="utf-8")
+    if args.text is not None:
+        text = args.text
+    else:
+        candidate = Path(args.input)
+        try:
+            text = candidate.read_text(encoding="utf-8") if candidate.is_file() else args.input
+        except OSError:
+            text = args.input
     print(json.dumps(predict(model, text), indent=2))
 
 
